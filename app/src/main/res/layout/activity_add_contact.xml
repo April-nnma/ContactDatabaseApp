@@ -74,9 +74,9 @@
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/imageViewCapture"
-            android:layout_width="156dp"
-            android:layout_height="156dp"
+            android:id="@+id/imageView"
+            android:layout_width="163dp"
+            android:layout_height="165dp"
             android:layout_marginTop="16dp"
             android:contentDescription="Captured Image"
             android:src="@drawable/image1" />

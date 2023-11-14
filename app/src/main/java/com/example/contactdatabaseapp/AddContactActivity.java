@@ -1,20 +1,27 @@
 package com.example.contactdatabaseapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddContactActivity extends AppCompatActivity {
 
@@ -23,7 +30,10 @@ public class AddContactActivity extends AppCompatActivity {
 
     private EditText editTextName, editTextDOB, editTextEmail;
     private ImageView imageViewCapture;
+    private String currentPhotoPath;
+
     private Button buttonSave, buttonView;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +43,7 @@ public class AddContactActivity extends AppCompatActivity {
         editTextName = findViewById(R.id.editTextName);
         editTextDOB = findViewById(R.id.editTextDOB);
         editTextEmail = findViewById(R.id.editTextEmail);
-        imageViewCapture = findViewById(R.id.imageViewCapture);
+        imageViewCapture = findViewById(R.id.imageView);  // Corrected ID
         buttonSave = findViewById(R.id.buttonSave);
         buttonView = findViewById(R.id.buttonView);
 
@@ -52,17 +62,76 @@ public class AddContactActivity extends AppCompatActivity {
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Handle Save button click
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddContactActivity.this);
+                builder.setTitle("Confirmation");
+                builder.setMessage("Are you sure you want to save?");
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Extract data from UI
+                        String name = editTextName.getText().toString().trim();
+                        String dob = editTextDOB.getText().toString().trim();
+                        String email = editTextEmail.getText().toString().trim();
+
+                        // Check if any field is empty
+                        if (name.isEmpty() || dob.isEmpty() || email.isEmpty()) {
+                            Toast.makeText(AddContactActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Get the profile image as a Bitmap
+                        Bitmap profileImage = ((BitmapDrawable) imageViewCapture.getDrawable()).getBitmap();
+
+                        // Create a ContactModel object
+                        ContactModel newContact = new ContactModel(name, dob, email, profileImage);
+
+                        // Add the new contact to the database
+                        DatabaseHelper databaseHelper = new DatabaseHelper(AddContactActivity.this);
+                        databaseHelper.addContact(newContact);
+
+                        // Show a success message
+                        Toast.makeText(AddContactActivity.this, "Contact saved successfully", Toast.LENGTH_SHORT).show();
+
+                        // Clear the input fields
+                        editTextName.getText().clear();
+                        editTextDOB.getText().clear();
+                        editTextEmail.getText().clear();
+                        imageViewCapture.setImageResource(R.drawable.image1);  // Reset to default image
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked No, do nothing
+                    }
+                });
+
+                // Create and show the dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
         // Set onClickListener for View button
         buttonView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                // Handle View button click
+            public void onClick(View v) {
+                // Pass the contacts to the ViewContactActivity
+                List<ContactModel> contacts = databaseHelper.getAllContacts();
+                Log.d("ContactDatabase", "Number of contacts: " + contacts.size());
+
+                Intent intent = new Intent(AddContactActivity.this, ViewContactActivity.class);
+                intent.putParcelableArrayListExtra("CONTACT_LIST", new ArrayList<>(contacts));
+
+                // Start the ViewContactActivity
+                startActivity(intent);
             }
         });
+
+
+
     }
 
     // Function to open the image picker (from camera or gallery)
