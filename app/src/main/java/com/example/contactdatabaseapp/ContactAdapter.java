@@ -43,9 +43,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ContactModel contact = contactList.get(position);
-        holder.textViewName.setText("Name: " + contact.getName());
-        holder.textViewDOB.setText("DOB: " + contact.getDob());
-        holder.textViewEmail.setText("Email: " + contact.getEmail());
+        holder.textViewName.setText("" + contact.getName());
+        holder.textViewDOB.setText("" + contact.getDob());
+        holder.textViewEmail.setText("" + contact.getEmail());
 
         // Assuming you have a method in ContactModel to get the profile image as Bitmap
         Bitmap profileImage = contact.getProfileImage();
