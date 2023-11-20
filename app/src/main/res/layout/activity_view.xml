@@ -73,7 +73,7 @@
                 android:id="@+id/editTextDOB"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="20"
+                android:layout_weight="7"
                 android:hint="" />
         </LinearLayout>
 

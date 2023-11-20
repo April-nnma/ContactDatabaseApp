@@ -44,7 +44,7 @@
             android:id="@+id/editTextDOB"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="20"
+            android:layout_weight="7"
             android:hint=""/>
     </LinearLayout>
 
@@ -77,8 +77,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageView"
-            android:layout_width="219dp"
-            android:layout_height="230dp"
+            android:layout_width="223dp"
+            android:layout_height="227dp"
             android:layout_marginTop="16dp"
             android:background="@color/purple_700"
             android:contentDescription="Captured Image"
